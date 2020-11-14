@@ -10,14 +10,13 @@ G = 9.81 # gravity
 R = 0.33 # radius 
 M1 = 1.3 # mass of the wheel
 M2 = 0.490 # mass of the bird
-D1 = 0.5 # friction theta 
+D1 = 0.003 # friction theta 
 D2 = 0.5 # friction phi
-D3 = 10 # friction nu
+D3 = 50 # friction nu
 INIT_STATE = [.1, 0, .1, 0, 0, 0]
-L0 = 0.15
+L0 = 0.20
 K = 100
 
-#f = lambda theta, phi, a: (M1 + M2 - M2 * cos(phi - theta) M2 * sin(phi - theta)) * a
 
 class Wheel:
 
@@ -26,21 +25,21 @@ class Wheel:
         self.time_elapsed = 0
 
     def invM(self):
+        '''
+            returns Inverse Matrix LHS
+        '''
         theta, phi, nu, _, _, _= self.state
         l = (L0 + nu)
         M = np.zeros((3, 3))
-        '''
-        M[0, :] = [1/f(theta, phi, R ** 2) , -cos(phi - theta)/f(theta, phi, R * l), -sin(phi - theta)/f(theta, phi, R)]
-        M[1, :] = [-1/f(theta, phi, l, R * l), 1/(l * m), sin(phi - theta)/f(theta, phi, l, l)]
-        M[2, :] = [-1/f(theta, phi, R), cos(phi - theta)/f(theta, phi, l), M1 + M2 - M2 * cos(phi - theta)]
-        M =/ detM(theta, phi, l)
-        '''
         M[0, :] = [(M1 + M2) * R **2, M2 * R * l * cos(phi - theta), M2 * R * sin(phi - theta)]
         M[1, :] = [M2 * R * l, M2 * l ** 2, 0]
         M[2, :] = [M2 * R, 0, M2]
         return inv(M)
 
     def A(self):
+        '''
+            returns RHS 1
+        '''
         theta, phi, nu, theta_d, phi_d, nu_d = self.state
         a0 = -(L0 + nu) * (phi * theta_d - phi * phi_d + phi_d * theta_d) * sin(phi - theta) - 2 * nu_d * phi_d  * cos(phi - theta)
         a1 = -(L0 + nu) * (theta_d ** 2) * sin(phi - theta)
@@ -50,6 +49,9 @@ class Wheel:
         return A
 
     def B(self):
+        '''
+            returns RHS 2
+        '''
         theta, phi, nu, _, phi_d, nu_d = self.state
         b0 = -(M1 + M2) * G * R * sin(theta)
         b1 = - 2 * M2 * (nu + L0) * nu_d * phi_d + M2 * G * (nu + L0) * sin(phi)
@@ -58,6 +60,9 @@ class Wheel:
         return B
 
     def model(self, state, t):
+        '''
+            returns RHS F
+        '''
         _, _, _, theta_d, phi_d, nu_d = state
         theta = theta_d
         phi = phi_d
