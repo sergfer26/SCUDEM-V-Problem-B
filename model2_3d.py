@@ -132,9 +132,10 @@ def circle(l):
     s = np.linspace(0, 2 * np.pi, 100)
     return [l * cos(s),l * sin(s)]
 x1, y1 = circle(R)
+
 plt.plot(x1, y1)
-# ani.save('3grados.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
-plt.show()
+ani.save('3grados.mp4', fps=30, extra_args=['-vcodec', 'libx264'], dpi=300)
+# plt.show()
 
 
 
