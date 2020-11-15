@@ -3,6 +3,8 @@
 
 Still working on the description.
 
+Video: https://youtu.be/uKIbUNGJaos
+
 Best code so far ``model2_3d.py``.
 
 G = 9.81 # gravity
