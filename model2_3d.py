@@ -11,12 +11,12 @@ G = 9.81 # gravity
 R = 0.33 # radius 
 M1 = 1.3 # mass of the wheel
 M2 = 0.490 # mass of the bird
-D1 = 0 # friction theta 
-D2 = 0 # friction phi
-D3 = 12.5 #0.1 # friction eta
-INIT_STATE = [0.1 * np.pi, 0.1 * np.pi, .05, 0, 0, .5]
-L0 = 0.05
-K = 30
+D1 = 0.0022 # friction theta 
+D2 = 0.5 # friction phi
+D3 = 20 #0.1 # friction eta
+INIT_STATE = [0.1* np.pi, .2 * np.pi, .05, .5, 0, 0]
+L0 = 0.1
+K = 75
 
 
 class Wheel:
@@ -73,6 +73,7 @@ class Wheel:
         return theta, phi, nu, theta_d, phi_d, nu_d
 
     def step(self,dt):
+        #sleep(0.5)
         self.state = odeint(self.model, self.state, [0, dt])[1]
         self.time_elapsed += dt
 
@@ -116,8 +117,9 @@ t0 = time()
 animate(0)
 t1 = time()
 interval = 1000 * dt - (t1 - t0)
+print(t1 - t0)
 
-ani = animation.FuncAnimation(fig, animate, frames=300,
+ani = animation.FuncAnimation(fig, animate, frames=550,
                               interval=interval, blit=True, init_func=init)
 
 # save the animation as an mp4.  This requires ffmpeg or mencoder to be
@@ -131,7 +133,7 @@ def circle(l):
     return [l * cos(s),l * sin(s)]
 x1, y1 = circle(R)
 plt.plot(x1, y1)
-#ani.save('3grados.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+# ani.save('3grados.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 plt.show()
 
 
