@@ -5,17 +5,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import FuncAnimation
+from time import sleep
 
 G = 9.81 # gravity
 R = 0.33 # radius 
 M1 = 1.3 # mass of the wheel
 M2 = 0.490 # mass of the bird
-D1 = 0.003 # friction theta 
-D2 = 0.5 # friction phi
-D3 = 50 # friction nu
-INIT_STATE = [.1, 0, .1, 0, 0, 0]
-L0 = 0.20
-K = 100
+D1 = 0 # friction theta 
+D2 = 0 # friction phi
+D3 = 12.5 #0.1 # friction eta
+INIT_STATE = [0.1 * np.pi, 0.1 * np.pi, .05, 0, 0, .5]
+L0 = 0.05
+K = 30
 
 
 class Wheel:
@@ -41,7 +42,7 @@ class Wheel:
             returns RHS 1
         '''
         theta, phi, nu, theta_d, phi_d, nu_d = self.state
-        a0 = -(L0 + nu) * (phi * theta_d - phi * phi_d + phi_d * theta_d) * sin(phi - theta) - 2 * nu_d * phi_d  * cos(phi - theta)
+        a0 = (L0 + nu) * (phi_d ** 2) * sin(phi - theta) - 2 * nu_d * phi_d  * cos(phi - theta)
         a1 = -(L0 + nu) * (theta_d ** 2) * sin(phi - theta)
         a2 = (theta_d ** 2) * cos(phi - theta)
         A = np.array([a0, a1, a2])
@@ -53,9 +54,9 @@ class Wheel:
             returns RHS 2
         '''
         theta, phi, nu, _, phi_d, nu_d = self.state
-        b0 = -(M1 + M2) * G * R * sin(theta)
+        b0 = (M2) * G * R * sin(theta)
         b1 = - 2 * M2 * (nu + L0) * nu_d * phi_d + M2 * G * (nu + L0) * sin(phi)
-        b2 = M2 * (nu + L0) * phi_d ** 2 - K * nu
+        b2 = M2 * (nu + L0) * phi_d ** 2 - K * nu-M2*G*cos(phi)
         B = np.array([b0, b1, b2])
         return B
 
